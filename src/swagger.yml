@@ -1,0 +1,460 @@
+swagger: '2.0'
+info:
+  description: This is a simple API to Accenture challange
+  version: 1.0.0
+  title: Movie Challenge
+  # put the contact info for your development or API team
+  contact:
+    email: whalyfeng@gmail.com
+
+# tags are used for organizing operations
+tags:
+- name: developers
+  description: Operations available to regular developers
+
+paths:
+  /movie:
+    get:
+      tags:
+      - developers
+      summary: search a movie
+      operationId: title
+      description: |
+        By passing in the appropriate options, you can search for
+        the movies in api
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: title
+        description: pass an optional search string title for looking up list of movies
+        required: true
+        schema:
+          type: string
+          example: Hulk
+          maximum: 255
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MovieItem'
+        400:
+          description: bad input parameter
+  /save:
+    post:
+      tags:
+      - developers
+      summary: save the movie to your database
+      operationId: imdbId
+      description: |
+        By passing in the appropriate options, you it's 
+        search and save a movie
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: allData
+        description: used to save a movie 
+        schema:
+          $ref: '#/definitions/BodyToSaveMovie'
+      - in: header
+        name: cpf
+        description: user cpf to save
+        required: true
+        type: string
+        maximum: 15
+      responses:
+        200:
+          description: save the movie selected
+          schema:
+            type: string
+            example: movie saved
+        400:
+          description: bad input parameter
+  /select:
+    post:
+      tags:
+      - developers
+      summary: get a movie from you database
+      operationId: movieToSelect
+      description: |
+        By passing in the appropriate options, you can search for
+        the movies in the api
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: title
+        description: select movie by title
+        required: false
+        type: string
+      - in: query
+        name: genre
+        description: select movie by genre
+        required: false
+        type: string
+      - in: query
+        name: actor
+        description: select movie by actor
+        required: false
+        type: string
+      - in: query
+        name: director
+        description: select movie by director
+        required: false
+        type: string
+      responses:
+        200:
+          description: catch the movie in database
+          schema:
+            $ref: '#/definitions/SelectedMovie'
+        400:
+          description: bad input parameter
+  /user:
+    post:
+      tags:
+      - developers
+      summary: to create a new user
+      operationId: userId
+      description: |
+        It's used to create a new user
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: userData
+        description: user name and cpf 
+        schema:
+          $ref: '#/definitions/NewUser'
+      responses:
+        200:
+          description: user saved
+          schema:
+            type: string
+            example: user saved
+        400:
+          description: bad input parameter
+  /rate:
+    post:
+      tags:
+      - developers
+      summary: To avaliate a movie
+      operationId: movieId
+      description: |
+        It's used to send a review
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: reviewData
+        description: all the data to send a movie review 
+        schema:
+          $ref: '#/definitions/RatingTheMovie'
+      responses:
+        200:
+          description: confirmation message 
+          schema:
+            type: string
+            example: Rated
+        400:
+          description: bad input parameter
+  /updateRate:
+    put:
+      tags:
+      - developers
+      summary: To update a movie review
+      operationId: movieIdentificator
+      description: |
+        It's used to update a review
+      produces:
+      - application/json
+      parameters:
+      - in: header
+        name: cpf
+        description: user cpf to update review
+        required: true
+        type: string
+        maximum: 15
+      - in: header
+        name: moveid
+        description: movie id to update review
+        required: true
+        type: string
+        maximum: 15
+      - in: body
+        name: updateReviewData
+        description: all the data to update a movie review 
+        schema:
+          $ref: '#/definitions/UpdateTheMovieReview'
+      responses:
+        200:
+          description: confirmation message 
+          schema:
+            type: string
+            example: Review updated
+        400:
+          description: bad input parameter
+  /group:
+    post:
+      tags:
+      - developers
+      summary: To create a discussion group
+      operationId: groupId
+      description: |
+        It's used to create a group
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: newGroupData
+        description: all data to create a new group 
+        schema:
+          $ref: '#/definitions/CreateGroup'
+      responses:
+        200:
+          description: confirmation message 
+          schema:
+            type: string
+            example: O filme do hulk é massa, vamos conversar sobre Created
+        400:
+          description: bad input parameter
+  /sendDiscussion:
+    post:
+      tags:
+      - developers
+      summary: To send a discussion to a group
+      operationId: discussionId
+      description: |
+        It's used to send a text to discussion group
+      produces:
+      - application/json
+      parameters:
+      - in: header
+        name: cpf
+        description: user cpf to create a discussion
+        required: true
+        type: string
+        maximum: 15
+      - in: header
+        name: moveid
+        description: movieId to reference in discussion
+        required: true
+        type: string
+        maximum: 15
+      - in: body
+        name: argument
+        description: all data to start a discussion
+        schema:
+          example: Im a huge fan of this universe
+          type: string
+          maximum: 255
+      responses:
+        200:
+          description: confirmation message 
+          schema:
+            type: string
+            example: Discussion Created
+        400:
+          description: bad input parameter
+  /askAdvice:
+    post:
+      tags:
+      - developers
+      summary: To solicit a recommendation 
+      operationId: adviceRequestId
+      description: |
+        It's used to solicit a movie recommendation
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: requestAdvice
+        description: the title of the topic 
+        schema:
+          example: Preciso de sugestão de filme de corrida
+          type: string
+          maximum: 255
+      responses:
+        200:
+          description: confirmation message 
+          schema:
+            type: string
+            example: Preciso de sugestão de filme de corrida Created
+        400:
+          description: bad input parameter
+  /sendAdvice:
+    post:
+      tags:
+      - developers
+      summary: To recommend a movie
+      operationId: adviceId
+      description: |
+        It's used to send an advice
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: adviceData
+        description: all data to answer an advice 
+        schema:
+          $ref: '#/definitions/Advice'
+      responses:
+        200:
+          description: confirmation message 
+          schema:
+            type: string
+            example: Advice sent
+        400:
+          description: bad input parameter
+definitions:
+  MovieItem:
+    type: object
+    required:
+    - Title
+    - Year
+    - imdbID
+    - Type
+    - Poster
+    properties:
+      Title:
+        type: string
+        example: The Incredible Hulk
+      Year:
+        type: string
+        format: date-time
+        example: 2008
+      imdbID:
+        type: string
+        example: tt0800080
+      Poster:
+        type: string
+        example: https://m.media-amazon.com/images/M/MV5BMTUyNzk3MjA1OF5BMl5BanBnXkFtZTcwMTE1Njg2MQ@@._V1_SX300.jpg
+  BodyToSaveMovie:
+    type: object
+    required:
+      - imdbId
+      - isPublic
+    properties:
+      imdbId:
+        type: string
+        maximum: 50
+      isPublic:
+        type: boolean
+        example: true
+  SelectedMovie:
+    type: object
+    required:
+    - title
+    - actors
+    - genre
+    - director
+    properties:
+      title:
+        type: string
+        example: Bicicleta, cullera, poma
+      actors:
+        type: string
+        example: Suvarna Alladi, Fidel Bellmunt, Monique Breteler
+      genre:
+        type: string
+        example: Documentary
+      director:
+        type: string
+        example: Carles Bosch
+  NewUser:
+    type: object
+    required:
+      - cpf
+      - name
+    properties:
+      cpf:
+        type: string
+        example: 999.999.999-99
+        maximum: 15
+      name:
+        type: string
+        example: Pedro Paulo
+        maximum: 255
+  RatingTheMovie:
+    type: object
+    required:
+    - movieId
+    - cpf
+    - isPublic
+    - comment
+    - rating
+    properties:
+      movieId:
+        type: string
+        example: tt0286716
+      cpf:
+        type: string
+        example: 999.999.999-99
+        maximum: 15
+      isPublic:
+        type: boolean
+        example: false
+      comment:
+        type: string
+        example: "Este filme é muito bom, ótimo roteiro"
+        maximum: 255
+      rating:
+        type: number
+        description: must be in 1 to 5 range
+        example: 5
+  UpdateTheMovieReview:
+    type: object
+    required:
+    - movieId
+    - cpf
+    - isPublic
+    - comment
+    - rating
+    properties:
+      isPublic:
+        type: boolean
+        example: false
+      comment:
+        type: string
+        example: "Este filme é muito bom, ótimo roteiro"
+        maximum: 255
+      rating:
+        type: number
+        description: must be in 1 to 5 range
+        example: 4
+  CreateGroup:
+    type: object
+    required:
+    - groupName
+    - isPublic
+    - description
+    properties:
+      groupName:
+        type: string
+        example: O filme do hulk é massa, vamos conversar sobre
+      isPublic:
+        type: boolean
+        example: true
+      description:
+        type: string
+        example: Este filme é muito bom, ótimo roteiro
+        maximum: 255
+  Advice:
+    type: object
+    required:
+      - cpf
+      - name
+    properties:
+      movieRateId:
+        type: number
+        example: 58
+      adviceRequestId:
+        type: number
+        example: 1
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /WCORP2/accenture-test/1.0.0
+schemes:
+ - https
